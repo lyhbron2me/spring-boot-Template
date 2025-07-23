@@ -1,18 +1,20 @@
 package com.lyh.chronos.lyhtetmplateproject.controller;
 
-import com.lyh.chronos.lyhtetmplateproject.service.UserService;
+import com.lyh.chronos.lyhtetmplateproject.service.UsersService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+//import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
 @RequestMapping("/test")
 public class TestController {
     @Autowired
-    private UserService userService;
+    private UsersService usersService;
     @GetMapping("/getDbTest")
     public String getDbTest() {
-        return "dbTest";
+//        return "dbTest";
+        return usersService.getById(1).toString();
     }
 }
