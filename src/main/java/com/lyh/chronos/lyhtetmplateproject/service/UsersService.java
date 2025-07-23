@@ -1,7 +1,9 @@
 package com.lyh.chronos.lyhtetmplateproject.service;
 
+import com.lyh.chronos.lyhtetmplateproject.entity.ResponseResult;
 import com.lyh.chronos.lyhtetmplateproject.entity.domain.Users;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.lyh.chronos.lyhtetmplateproject.entity.dto.UserRegisterDto;
 
 /**
 * @author Lenovo
@@ -10,4 +12,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface UsersService extends IService<Users> {
 
+
+    ResponseResult register(UserRegisterDto user);
 }
