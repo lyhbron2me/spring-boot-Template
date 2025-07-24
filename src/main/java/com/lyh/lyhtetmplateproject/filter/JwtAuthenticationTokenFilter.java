@@ -19,6 +19,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 @Component
 public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
@@ -43,7 +44,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         } catch (Exception e) {
             e.printStackTrace();
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "token 非法");
-                return;
+            return;
         }
         // 从 redis 中获取用户信息
         String redisKey = "login:" + userid;
@@ -61,8 +62,11 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
                 response.sendError(HttpServletResponse.SC_FORBIDDEN, "用户未登录或无权限");
                 return;
             }
+
+            // 延长 Redis 中的登录信息过期时间
+            redisCache.expire(redisKey, 60 * 60 * 24, TimeUnit.SECONDS); // 延长一天
+
             // 存入 SecurityContextHolder
-            // TODO 获取权限信息封装到 Authentication 中
             UsernamePasswordAuthenticationToken authenticationToken =
                     new UsernamePasswordAuthenticationToken(loginUser, null, loginUser.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
@@ -76,6 +80,10 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
                 response.sendError(HttpServletResponse.SC_FORBIDDEN, "用户未登录或无权限");
                 return;
             }
+
+            // 延长 Redis 中的登录信息过期时间
+            redisCache.expire(redisKey, 60 * 60 * 24, TimeUnit.SECONDS); // 延长一天
+
             // 存入 SecurityContextHolder
             UsernamePasswordAuthenticationToken authenticationToken =
                     new UsernamePasswordAuthenticationToken(loginUser, null, loginUser.getAuthorities());
