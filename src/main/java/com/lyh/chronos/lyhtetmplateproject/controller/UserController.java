@@ -7,6 +7,7 @@ import com.lyh.chronos.lyhtetmplateproject.service.LoginService;
 import com.lyh.chronos.lyhtetmplateproject.service.UsersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,7 +21,7 @@ public class UserController {
     private UsersService userService;
     //登录
     @PostMapping("/login")
-    public ResponseResult login(Users user){
+    public ResponseResult login(@RequestBody Users user){
         return loginService.login(user);
     }
 

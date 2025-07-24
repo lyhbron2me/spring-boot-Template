@@ -62,7 +62,7 @@ public class SecurityConfig {
 //                        .requestMatchers(HttpMethod.GET, "/moduleList/home").permitAll()
 //                        .requestMatchers(HttpMethod.GET, "/moduleList/store").permitAll()
                         .requestMatchers(HttpMethod.POST, "/user/login").permitAll()
-//                        .requestMatchers(HttpMethod.POST, "/user/register").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/user/register").permitAll()
 //                        .requestMatchers(HttpMethod.POST, "/user/getVerificationCode").permitAll()
 //                        .requestMatchers(HttpMethod.POST, "/user/findPassword").permitAll()
                         // 允许 SpringMVC 的默认错误地址匿名访问
