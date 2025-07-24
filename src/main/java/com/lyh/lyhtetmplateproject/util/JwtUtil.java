@@ -3,7 +3,9 @@ package com.lyh.lyhtetmplateproject.util;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 
+import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
+import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Date;
 import java.util.UUID;
@@ -65,7 +67,7 @@ public class JwtUtil {
         return Jwts.builder()
                 .id(id)                      // 唯一ID
                 .subject(subject)            // 主题
-                .issuer("sg")                // 签发者
+                .issuer("admin")                // 签发者
                 .issuedAt(now)               // 签发时间
                 .expiration(expDate)         // 过期时间
                 .signWith(secretKey, signatureAlgorithm)
@@ -98,11 +100,11 @@ public class JwtUtil {
         return parser.parseSignedClaims(jwt).getPayload();
     }
 
-    public static void main(String[] args) throws Exception {
-        String jwt = createJWT("2123");
-        System.out.println("生成的JWT: " + jwt);
-
-        Claims claims = parseJWT(jwt);
-        System.out.println("解析出的Subject: " + claims.getSubject());
-    }
+//    public static void main(String[] args) throws Exception {
+//        String jwt = createJWT("2123");
+//        System.out.println("生成的JWT: " + jwt);
+//
+//        Claims claims = parseJWT(jwt);
+//        System.out.println("解析出的Subject: " + claims.getSubject());
+//    }
 }
