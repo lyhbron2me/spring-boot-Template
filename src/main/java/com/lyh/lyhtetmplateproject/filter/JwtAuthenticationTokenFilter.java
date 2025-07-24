@@ -30,7 +30,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         // 获取 token
-        String token = request.getHeader("token");
+        String token = request.getHeader("Authorization");
         if (!StringUtils.hasText(token)) {
             // 放行
             filterChain.doFilter(request, response);
@@ -54,6 +54,9 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "用户未登录或无权限");
             return;
         }
+        
+        // Token一致性校验
+        String redisToken = null;
         if (cacheObject instanceof JSONObject) {
             JSONObject jsonObject = (JSONObject) cacheObject;
             LoginUser loginUser = jsonObject.toJavaObject(LoginUser.class);
@@ -62,9 +65,18 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
                 response.sendError(HttpServletResponse.SC_FORBIDDEN, "用户未登录或无权限");
                 return;
             }
+            
+            // 从Redis中获取存储的token进行一致性校验
+            redisToken = (String) redisCache.getCacheObject("token:" + userid);
+            if (redisToken == null || !redisToken.equals(token)) {
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "token已失效，请重新登录");
+                return;
+            }
 
             // 延长 Redis 中的登录信息过期时间
             redisCache.expire(redisKey, 60 * 60 * 24, TimeUnit.SECONDS); // 延长一天
+            // 延长token的过期时间
+            redisCache.expire("token:" + userid, 60 * 60 * 24, TimeUnit.SECONDS);
 
             // 存入 SecurityContextHolder
             UsernamePasswordAuthenticationToken authenticationToken =
@@ -80,9 +92,18 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
                 response.sendError(HttpServletResponse.SC_FORBIDDEN, "用户未登录或无权限");
                 return;
             }
+            
+            // 从Redis中获取存储的token进行一致性校验
+            redisToken = (String) redisCache.getCacheObject("token:" + userid);
+            if (redisToken == null || !redisToken.equals(token)) {
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "token已失效，请重新登录");
+                return;
+            }
 
             // 延长 Redis 中的登录信息过期时间
             redisCache.expire(redisKey, 60 * 60 * 24, TimeUnit.SECONDS); // 延长一天
+            // 延长token的过期时间
+            redisCache.expire("token:" + userid, 60 * 60 * 24, TimeUnit.SECONDS);
 
             // 存入 SecurityContextHolder
             UsernamePasswordAuthenticationToken authenticationToken =
@@ -95,4 +116,3 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         }
     }
 }
-

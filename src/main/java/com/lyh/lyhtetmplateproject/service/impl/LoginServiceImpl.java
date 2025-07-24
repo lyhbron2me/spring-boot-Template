@@ -36,6 +36,8 @@ public class LoginServiceImpl implements LoginService {
         String jwt = JwtUtil.createJWT(userId);
         //authenticate存入redis
         redisCache.setCacheObject("login:"+userId,loginUser,60 * 60 * 24, TimeUnit.SECONDS);
+        // 将token存入redis用于一致性校验
+        redisCache.setCacheObject("token:"+userId, jwt, 60 * 60 * 24, TimeUnit.SECONDS);
         //把token响应给前端
         HashMap<String,String> map = new HashMap<>();
         map.put("token",jwt);
@@ -49,6 +51,8 @@ public class LoginServiceImpl implements LoginService {
         LoginUser loginUser = (LoginUser) authentication.getPrincipal();
         Long userid = loginUser.getUser().getId();
         redisCache.deleteObject("login:"+userid);
+        // 删除token
+        redisCache.deleteObject("token:"+userid);
         return ResponseResult.okResult(200,"注销成功");
     }
 
