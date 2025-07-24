@@ -15,7 +15,8 @@ public enum AppHttpCodeEnum {
     NEED_LOGIN(402, "用户未登录"),
     USER_NOT_FOUND(410, "用户不存在"),
     NO_OPERATOR_AUTH(403, "无权限操作"),
-    UPDATE_FAILED(410, "更新失败");
+    UPDATE_FAILED(410, "更新失败"),
+    SYSTEM_ERROR(500, "服务器发生错误" );
     int code;
     String msg;
     AppHttpCodeEnum(int code, String msg){
