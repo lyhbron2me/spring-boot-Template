@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.lyh.lyhtetmplateproject.enmus.AppHttpCodeEnum;
 import com.lyh.lyhtetmplateproject.entity.ResponseResult;
-import com.lyh.lyhtetmplateproject.entity.domain.Users;
+import com.lyh.lyhtetmplateproject.entity.domain.User;
 import com.lyh.lyhtetmplateproject.entity.dto.UserRegisterDto;
 import com.lyh.lyhtetmplateproject.service.UsersService;
 import com.lyh.lyhtetmplateproject.mapper.UsersMapper;
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 * @createDate 2025-07-23 11:10:30
 */
 @Service
-public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users>
+public class UsersServiceImpl extends ServiceImpl<UsersMapper, User>
     implements UsersService{
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -38,7 +38,7 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users>
 //            return ResponseResult.errorResult(AppHttpCodeEnum.CODE_ERROR);
 //        }
         // 检查用户名是否已存在
-        if (getOne(new UpdateWrapper<Users>().eq("username", userDto.getUsername())) != null) {
+        if (getOne(new UpdateWrapper<User>().eq("username", userDto.getUsername())) != null) {
             return ResponseResult.errorResult(AppHttpCodeEnum.USERNAME_EXIST);
         }
         // 检查邮箱是否已存在
@@ -48,7 +48,7 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users>
         // 密码加密
         String encodedPassword = passwordEncoder.encode(userDto.getPassword());
         userDto.setPassword(encodedPassword);
-        Users user = BeanCopyUtils.copyBean(userDto, Users.class);
+        User user = BeanCopyUtils.copyBean(userDto, User.class);
         save(user);
         //删除验证码
 //        redisCache.deleteObject("emailCode:" + userDto.getEmail());

@@ -2,7 +2,7 @@ package com.lyh.lyhtetmplateproject.service.impl;
 
 import com.lyh.lyhtetmplateproject.entity.LoginUser;
 import com.lyh.lyhtetmplateproject.entity.ResponseResult;
-import com.lyh.lyhtetmplateproject.entity.domain.Users;
+import com.lyh.lyhtetmplateproject.entity.domain.User;
 import com.lyh.lyhtetmplateproject.service.LoginService;
 import com.lyh.lyhtetmplateproject.util.JwtUtil;
 import com.lyh.lyhtetmplateproject.util.RedisCache;
@@ -24,7 +24,7 @@ public class LoginServiceImpl implements LoginService {
     @Autowired
     private RedisCache redisCache;
     @Override
-    public ResponseResult login(Users user) {
+    public ResponseResult login(User user) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user.getUsername(),user.getPassword());
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
         if(Objects.isNull(authentication)){

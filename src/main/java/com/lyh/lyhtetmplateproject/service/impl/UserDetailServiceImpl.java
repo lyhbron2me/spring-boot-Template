@@ -3,7 +3,7 @@ package com.lyh.lyhtetmplateproject.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 
 import com.lyh.lyhtetmplateproject.entity.LoginUser;
-import com.lyh.lyhtetmplateproject.entity.domain.Users;
+import com.lyh.lyhtetmplateproject.entity.domain.User;
 import com.lyh.lyhtetmplateproject.service.UsersService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -20,9 +20,9 @@ public class UserDetailServiceImpl implements UserDetailsService{
     private UsersService userService;
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        LambdaQueryWrapper<Users> queryWrapper = new LambdaQueryWrapper();
-        queryWrapper.eq(Users::getUsername,username);
-        Users user = userService.getOne(queryWrapper);
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper();
+        queryWrapper.eq(User::getUsername,username);
+        User user = userService.getOne(queryWrapper);
         if(Objects.isNull(user)){
             throw new RuntimeException("用户名或密码错误");
         }
@@ -30,9 +30,9 @@ public class UserDetailServiceImpl implements UserDetailsService{
     }
 
     public UserDetails loadUserByUserId(Long id) throws UsernameNotFoundException {
-        LambdaQueryWrapper<Users> queryWrapper = new LambdaQueryWrapper();
-        queryWrapper.eq(Users::getId,id);
-        Users user = userService.getOne(queryWrapper);
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper();
+        queryWrapper.eq(User::getId,id);
+        User user = userService.getOne(queryWrapper);
         if(Objects.isNull(user)){
             throw new RuntimeException("用户名或密码错误");
         }

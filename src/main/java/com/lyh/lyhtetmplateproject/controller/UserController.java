@@ -1,7 +1,7 @@
 package com.lyh.lyhtetmplateproject.controller;
 
 import com.lyh.lyhtetmplateproject.entity.ResponseResult;
-import com.lyh.lyhtetmplateproject.entity.domain.Users;
+import com.lyh.lyhtetmplateproject.entity.domain.User;
 import com.lyh.lyhtetmplateproject.entity.dto.UserRegisterDto;
 import com.lyh.lyhtetmplateproject.service.LoginService;
 import com.lyh.lyhtetmplateproject.service.UsersService;
@@ -21,7 +21,7 @@ public class UserController {
     private UsersService userService;
     //登录
     @PostMapping("/login")
-    public ResponseResult login(@RequestBody Users user){
+    public ResponseResult login(@RequestBody User user){
         return loginService.login(user);
     }
 

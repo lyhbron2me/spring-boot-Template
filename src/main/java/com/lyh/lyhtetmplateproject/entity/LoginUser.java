@@ -1,7 +1,7 @@
 package com.lyh.lyhtetmplateproject.entity;
 
 
-import com.lyh.lyhtetmplateproject.entity.domain.Users;
+import com.lyh.lyhtetmplateproject.entity.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LoginUser implements UserDetails {
-    private Users user;
+    private User user;
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of();

@@ -1,7 +1,6 @@
 package com.lyh.lyhtetmplateproject.entity.domain;
 
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.util.Date;
@@ -11,14 +10,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 权限菜单表
- * @TableName menus
+ * 用户表
+ * @TableName users
  */
-@TableName(value ="menus")
+@TableName(value ="user")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Menus {
+public class User {
     /**
      * 主键ID
      */
@@ -26,59 +25,39 @@ public class Menus {
     private Long id;
 
     /**
-     * 菜单/权限名称
+     * 用户名
      */
-    private String name;
+    private String username;
 
     /**
-     * 权限编码
+     * 密码
      */
-    private String code;
+    private String password;
 
     /**
-     * 类型：菜单、按钮、API接口
+     * 邮箱
      */
-    private Object type;
+    private String email;
 
     /**
-     * 父级ID
+     * 手机号
      */
-    private Long parentId;
+    private String phone;
 
     /**
-     * 路由路径
+     * 昵称
      */
-    private String path;
+    private String nickname;
 
     /**
-     * 组件路径
+     * 头像
      */
-    private String component;
+    private String avatar;
 
     /**
-     * 图标
-     */
-    private String icon;
-
-    /**
-     * HTTP方法
-     */
-    private Object method;
-
-    /**
-     * 描述
-     */
-    private String description;
-
-    /**
-     * 状态：1启用 0禁用
+     * 状态：1正常 0禁用
      */
     private Integer status;
-
-    /**
-     * 排序
-     */
-    private Integer sortOrder;
 
     /**
      * 创建时间
@@ -89,4 +68,9 @@ public class Menus {
      * 更新时间
      */
     private Date updatedAt;
+
+    /**
+     * 最后登录时间
+     */
+    private Date lastLoginAt;
 }
