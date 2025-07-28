@@ -4,6 +4,7 @@ import com.lyh.lyhtetmplateproject.entity.ResponseResult;
 import com.lyh.lyhtetmplateproject.service.UsersService;
 import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.stereotype.Controller;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -66,5 +67,23 @@ public class TestController {
         List<String> list = new ArrayList<>();
         String item = list.get(0); // 这里会抛出数组越界异常
         return ResponseResult.okResult();
+    }
+
+
+    /**
+     * 权限测试
+     */
+    @GetMapping("/permission")
+    @PreAuthorize("hasAuthority('test')")
+    public ResponseResult permission() {
+        return ResponseResult.okResult("权限认证成功");
+    }
+    /**
+     * 权限测试
+     */
+    @GetMapping("/permission2")
+    @PreAuthorize("hasAuthority('test2')")
+    public ResponseResult permission2() {
+        return ResponseResult.okResult("权限认证成功");
     }
 }
