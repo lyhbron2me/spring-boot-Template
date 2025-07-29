@@ -20,3 +20,15 @@ mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   mapper-locations: classpath*:/mapper/**/*.xml
+
+# 统一放行路径配置
+web:
+  security:
+    permit-all-paths:
+      - "/user/login"
+      - "/user/register"
+      - "/client/**"
+      - "/error"
+      - "/v3/api-docs/**"
+      - "/swagger-ui.html"
+      - "/swagger-ui/**"

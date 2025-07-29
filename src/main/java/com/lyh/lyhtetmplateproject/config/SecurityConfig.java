@@ -18,8 +18,10 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.util.CollectionUtils;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Configuration
@@ -28,6 +30,8 @@ import java.util.Map;
 public class SecurityConfig {
     @Autowired
     private JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter;
+    @Autowired
+    private WebSecurityProperties webSecurityProperties;
     @Bean
     public PasswordEncoder passwordEncoder() {
         String idForEncode = "bcrypt";
@@ -58,26 +62,23 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
                         // 允许所有OPTIONS请求
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        // 允许直接访问授权登录接口
-//                        .requestMatchers(HttpMethod.GET, "/moduleList/home").permitAll()
-//                        .requestMatchers(HttpMethod.GET, "/moduleList/store").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/user/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/user/register").permitAll()
-//                        .requestMatchers(HttpMethod.POST, "/user/getVerificationCode").permitAll()
-//                        .requestMatchers(HttpMethod.POST, "/user/findPassword").permitAll()
-                        // 允许 SpringMVC 的默认错误地址匿名访问
-                        .requestMatchers("/error").permitAll()
-                        // 允许访问 Swagger UI 相关路径
-                        .requestMatchers("/v3/api-docs/**").permitAll()
-                        .requestMatchers("/swagger-ui.html").permitAll()
-                        .requestMatchers("/swagger-ui/**").permitAll()
-                        // 其他所有接口必须有Authority信息，Authority在登录成功后的UserDetailsImpl对象中默认设置“ROLE_USER”
-                        //.requestMatchers("/**").hasAnyAuthority("ROLE_USER")
-                        // 允许任意请求被已登录用户访问，不检查Authority
-                        .anyRequest().authenticated())
+                );
+        // 添加放行路径
+        List<String> permitAllPaths = webSecurityProperties.getPermitAllPaths();
+        if (!CollectionUtils.isEmpty(permitAllPaths)) {
+            for (String url : permitAllPaths) {
+                http.authorizeHttpRequests(authorizeHttpRequests ->
+                        authorizeHttpRequests.requestMatchers(url).permitAll()
+                );
+            }
+        }
+
+        http.authorizeHttpRequests(authorizeHttpRequests ->
+                authorizeHttpRequests.anyRequest().authenticated()
+        );
 //                .authenticationProvider(authenticationProvider())
 //                // 加我们自定义的过滤器，替代UsernamePasswordAuthenticationFilter
-                .addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

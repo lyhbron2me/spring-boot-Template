@@ -2,6 +2,7 @@ package com.lyh.lyhtetmplateproject.filter;
 
 import com.alibaba.fastjson2.JSONObject;
 
+import com.lyh.lyhtetmplateproject.config.WebSecurityProperties;
 import com.lyh.lyhtetmplateproject.entity.LoginUser;
 import com.lyh.lyhtetmplateproject.util.RedisCache;
 import com.lyh.lyhtetmplateproject.util.JwtUtil;
@@ -14,10 +15,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -27,10 +30,22 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     @Autowired
     private RedisCache redisCache;
 
+    @Autowired
+    private WebSecurityProperties webSecurityProperties;
+
+    private AntPathMatcher antPathMatcher = new AntPathMatcher();
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         // 获取 token
         String token = request.getHeader("Authorization");
+
+        // 检查请求路径是否在放行列表中
+        if (shouldNotFilter(request)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         if (!StringUtils.hasText(token)) {
             // 放行
             filterChain.doFilter(request, response);
@@ -114,5 +129,22 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         } else {
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Unexpected type from Redis: " + cacheObject.getClass().getName());
         }
+    }
+
+    /**
+     * 判断当前请求是否不需要进行JWT验证
+     * @param request 当前HTTP请求
+     * @return 是否不需要进行JWT验证
+     */
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        List<String> permitAllPaths = webSecurityProperties.getPermitAllPaths();
+        if (permitAllPaths != null) {
+            return permitAllPaths.stream().anyMatch(path -> {
+                // 使用AntPathMatcher进行路径匹配
+                return antPathMatcher.match(path, request.getServletPath());
+            });
+        }
+        return false;
     }
 }
