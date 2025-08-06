@@ -3,7 +3,10 @@ package com.lyh.lyhtetmplateproject.service.impl;
 import com.lyh.lyhtetmplateproject.entity.LoginUser;
 import com.lyh.lyhtetmplateproject.entity.ResponseResult;
 import com.lyh.lyhtetmplateproject.entity.domain.User;
+import com.lyh.lyhtetmplateproject.entity.vo.LoginVo;
+import com.lyh.lyhtetmplateproject.entity.vo.UserVo;
 import com.lyh.lyhtetmplateproject.service.LoginService;
+import com.lyh.lyhtetmplateproject.util.BeanCopyUtils;
 import com.lyh.lyhtetmplateproject.util.JwtUtil;
 import com.lyh.lyhtetmplateproject.util.RedisCache;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,9 +42,10 @@ public class LoginServiceImpl implements LoginService {
         // 将token存入redis用于一致性校验
         redisCache.setCacheObject("token:"+userId, jwt, 60 * 60 * 24, TimeUnit.SECONDS);
         //把token响应给前端
-        HashMap<String,String> map = new HashMap<>();
-        map.put("token",jwt);
-        return new ResponseResult(200,"登陆成功",map);
+        //返回用户信息
+        UserVo userVo = BeanCopyUtils.copyBean(loginUser.getUser(),UserVo.class);
+        LoginVo loginVo = new LoginVo(userVo,jwt);
+        return ResponseResult.okResult(loginVo);
     }
 
     @Override
